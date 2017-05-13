@@ -1,4 +1,4 @@
-name := "scalaTest"
+name := "funapp"
 
 version := "1.0"
 

@@ -12,11 +12,17 @@ case class Gen[A](sample: State[Rng, A]) {
 
   def flatMap[B](f: A => Gen[B]): Gen[B] = Gen(sample.flatMap(x => f(x).sample))
 
+  def map[A, B](f: A => B): Gen[B] = Gen(sample.map(f))
+
   def listOfN(size: Gen[Int]): Gen[List[A]] = {
     size.flatMap(Gen.listOfN(_, this))
   }
 
-  //def unsized: SGen[A] = SGen(_ => this)
+  def listOfN(n: Int): Gen[List[A]] = {
+    Gen.listOfN(n, this)
+  }
+
+  def unsized: SGen[A] = SGen(_ => this)
 
 }
 
@@ -40,8 +46,6 @@ object Gen {
   def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = {
     Gen(State.sequence(List.fill(n)(g.sample)))
   }
-
-  def map[A, B](a:Gen[A])(f: A => B): Gen[B] = Gen(a.sample.map(f))
 
   def union[A](g1: Gen[A], g2: Gen[A]): Gen[A] = {
     boolean.flatMap(b => if (b) g1 else g2)
