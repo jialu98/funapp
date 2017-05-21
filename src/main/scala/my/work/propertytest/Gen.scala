@@ -47,6 +47,8 @@ object Gen {
     Gen(State.sequence(List.fill(n)(g.sample)))
   }
 
+  def listOf1(size: Gen[Int]): SGen[List[Int]] = SGen(n => size.listOfN(n.max(1)))
+
   def union[A](g1: Gen[A], g2: Gen[A]): Gen[A] = {
     boolean.flatMap(b => if (b) g1 else g2)
   }
